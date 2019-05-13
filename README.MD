@@ -5,3 +5,4 @@
 4. 在conf/module.json文件添加配置，添加需要导入的模块名（dynamic_module.inventory）
 和动态模块中需要运行的函数名。
 5. inventory.py需要添加实际数据库地址，收件人列表字符串，运行的sql脚本路径。
+6. conf/db_addr.json数据库连接地址配置文件。

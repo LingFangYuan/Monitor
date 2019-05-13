@@ -5,18 +5,24 @@ import sendMail
 
 def contrast():
     # 接收人
-    # mailto_list = '******@***.***,*****@***.***'
-    mailto_list = '******@*****.***,  *****@*****.***,  ******@**.****'
+    mailto_list = '**********@**.**,***@**.***'
+    
     # 附件路径名
     filename = './excel/E3+与IWMS库存对比.xlsx'
 
-    # 建立数据库连接
-    oracle = Oracle(user='', passwd='', db='')
-    mssql = MsSql(host='', port=, user='', passwd='', db='')
+    try:
+        # 建立数据库连接
+        oracle = Oracle(dbtype='oracle', db='E3ZS')
+        mssql = MsSql(dbtype='mssql', db='IWMS')
 
-    # 执行脚本，并返回数据帧对象
-    e3 = oracle.get_DataFrame('./sql/E3+inventory.sql')
-    iwms = mssql.get_DataFrame('./sql/IWSinventory.sql')
+        # 执行脚本，并返回数据帧对象
+        e3 = oracle.get_DataFrame('./sql/E3+inventory.sql')
+        iwms = mssql.get_DataFrame('./sql/IWSinventory.sql')
+    finally:
+        if oracle:
+            del oracle
+        if mssql:
+            del mssql
 
     # 通过仓库和SKU进行连接
     rs = pd.merge(e3, iwms, how='outer', left_on=['仓库', 'SKU'], right_on=['仓库', 'SKU'],

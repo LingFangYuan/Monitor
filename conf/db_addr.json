@@ -1,0 +1,27 @@
+{
+  "oracle": {
+    "E3ZS": {
+      "user": "",
+      "passwd": "",
+      "db": ""
+    }
+  },
+  "mysql": {
+    "APP": {
+      "host": "",
+      "port": ,
+      "user": "",
+      "passwd": "",
+      "db": ""
+    }
+  },
+  "mssql": {
+    "IWMS": {
+      "host": "",
+      "port": ,
+      "user": "",
+      "passwd": "",
+      "db": ""
+    }
+  }
+}

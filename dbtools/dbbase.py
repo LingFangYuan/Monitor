@@ -1,7 +1,7 @@
 import pandas as pd
 import cx_Oracle
 import pymysql
-from dbtools.get_sqltext import get_sql
+from dbtools.tools import get_sql, get_addr
 import warnings
 
 with warnings.catch_warnings():
@@ -11,7 +11,7 @@ with warnings.catch_warnings():
 
 class DbBase(object):
 
-    def __init__(self, host, port, user, passwd, db):
+    def __init__(self, host=None, port=None, user=None, passwd=None, db=None):
         self.host = host
         self.port = port
         self.user = user
@@ -68,10 +68,13 @@ class DbBase(object):
         return pd.read_sql(sql, self.conn, index_col=idx)
 
 
-class Oracle(DbBase):
+class DbDecor(DbBase):
 
-    def __init__(self, user, passwd, db):
-        super().__init__(host=None, port=None, user=user, passwd=passwd, db=db)
+    def __init__(self, dbtype, db, path='./conf/db_addr.json'):
+        super().__init__(**get_addr(dbtype, db, path))
+
+
+class Oracle(DbDecor):
 
     def get_conn(self):
         """
@@ -82,7 +85,7 @@ class Oracle(DbBase):
         self.cursor = self.conn.cursor()  # 获取cursor
 
 
-class MySql(DbBase):
+class MySql(DbDecor):
 
     def get_conn(self):
         """"
@@ -95,10 +98,11 @@ class MySql(DbBase):
         self.cursor = self.conn.cursor()  # 获取cursor
 
 
-class MsSql(DbBase):
+class MsSql(DbDecor):
 
-    def __init__(self, host, port, user, passwd, db):
-        super().__init__(':'.join([host, str(port)]), None, user, passwd, db)
+    def __init__(self, dbtype, db, path='./conf/db_addr.json'):
+        super().__init__(dbtype, db, path)
+        self.host = ':'.join([self.host, str(self.port)])
 
     def get_conn(self):
         """"
@@ -106,15 +110,15 @@ class MsSql(DbBase):
         conn连接和cursor游标
         :return: conn, cursor
         """
-        self.conn = pymssql.connect(host=self.host, port=self.port, user=self.user, password=self.passwd,
+        self.conn = pymssql.connect(host=self.host, user=self.user, password=self.passwd,
                                     database=self.db)  # 连接数据库
         self.cursor = self.conn.cursor()  # 获取cursor
 
 
 if __name__ == '__main__':
-    oracle = Oracle()
-    mysql = MySql()
-    mssql = MsSql()
+    oracle = Oracle('oracle', 'E3ZS', '../conf/db_addr.json')
+    mysql = MySql('mysql', 'APP', '../conf/db_addr.json')
+    mssql = MsSql('mssql', 'IWMS', '../conf/db_addr.json')
     df1 = oracle.get_DataFrame('../sql/test1.sql')
     df2 = mysql.get_DataFrame('../sql/test2.sql')
     df3 = mssql.get_DataFrame('../sql/test3.sql')

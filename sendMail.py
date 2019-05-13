@@ -72,7 +72,7 @@ def send(mailto_list, mail_title, mail_content, content_type='plain', filelist=N
 if __name__ == '__main__':
     # send list
     try:
-        mailto_list = "410982322@qq.com,786173189@qq.com"
+        mailto_list = "410982322@qq.com"
         mail_title = '测试发送附件'
         mail_content = '测试发送附件'
         send(mailto_list, mail_title, mail_content, 'plain', ['aa.xlsx'])
